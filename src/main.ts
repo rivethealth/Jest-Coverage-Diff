@@ -20,9 +20,9 @@ async function run(): Promise<void> {
     const delta = Number(core.getInput('delta'))
     const rawTotalDelta = core.getInput('total_delta')
     const githubClient = github.getOctokit(githubToken)
-    const prNumber = github.context.issue.number
-    const branchNameBase = github.context.payload.pull_request?.base.ref
-    const branchNameHead = github.context.payload.pull_request?.head.ref
+    const prNumber = core.getInput('prNumber'); //github.context.issue.number
+    const branchNameBase = core.getInput('branchNameBase'); //github.context.payload.pull_request?.base.ref
+    const branchNameHead = core.getInput('branchNameHead'); //github.context.payload.pull_request?.head.ref
     const useSameComment = JSON.parse(core.getInput('useSameComment'))
     const commentIdentifier = `<!-- codeCoverageDiffComment -->`
     const deltaCommentIdentifier = `<!-- codeCoverageDeltaComment -->`
@@ -35,9 +35,10 @@ async function run(): Promise<void> {
     const codeCoverageNew = <CoverageReport>(
       JSON.parse(fs.readFileSync('coverage-summary.json').toString())
     )
-    execSync('/usr/bin/git fetch')
-    execSync('/usr/bin/git stash')
-    execSync(`/usr/bin/git checkout --progress --force ${branchNameBase}`)
+    // Not needed when coverage-summary.json has already been acquired
+    //execSync('/usr/bin/git fetch')
+    //execSync('/usr/bin/git stash')
+    //execSync(`/usr/bin/git checkout --progress --force ${branchNameBase}`)
     if (commandAfterSwitch) {
       execSync(commandAfterSwitch)
     }

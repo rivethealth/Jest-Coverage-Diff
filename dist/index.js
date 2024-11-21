@@ -2035,9 +2035,9 @@ function run() {
             const delta = Number(core.getInput('delta'));
             const rawTotalDelta = core.getInput('total_delta');
             const githubClient = github.getOctokit(githubToken);
-            const prNumber = github.context.issue.number;
-            const branchNameBase = (_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base.ref;
-            const branchNameHead = (_b = github.context.payload.pull_request) === null || _b === void 0 ? void 0 : _b.head.ref;
+            const prNumber = core.getInput('prNumber');
+            const branchNameBase = core.getInput('branchNameBase');
+            const branchNameHead = core.getInput('branchNameHead');
             const useSameComment = JSON.parse(core.getInput('useSameComment'));
             const commentIdentifier = `<!-- codeCoverageDiffComment -->`;
             const deltaCommentIdentifier = `<!-- codeCoverageDeltaComment -->`;
@@ -2048,9 +2048,6 @@ function run() {
             let commentId = null;
             child_process_1.execSync(commandToRun);
             const codeCoverageNew = (JSON.parse(fs_1.default.readFileSync('coverage-summary.json').toString()));
-            child_process_1.execSync('/usr/bin/git fetch');
-            child_process_1.execSync('/usr/bin/git stash');
-            child_process_1.execSync(`/usr/bin/git checkout --progress --force ${branchNameBase}`);
             if (commandAfterSwitch) {
                 child_process_1.execSync(commandAfterSwitch);
             }
