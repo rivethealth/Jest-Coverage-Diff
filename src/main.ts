@@ -54,7 +54,7 @@ async function run(): Promise<void> {
       codeCoverageOld
     )
     let messageToPost = `## Test coverage results :test_tube: \n
-    Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n\n`
+    Code coverage diff between base branch ${branchNameBase} and head branch ${branchNameHead} \n\n`
     const coverageDetails = diffChecker.getCoverageDetails(
       !fullCoverage,
       `${currentDirectory}/`
@@ -67,7 +67,7 @@ async function run(): Promise<void> {
         'Status | File | % Stmts | % Branch | % Funcs | % Lines \n -----|-----|---------|----------|---------|------ \n'
       messageToPost += coverageDetails.join('\n')
     }
-    messageToPost = `${commentIdentifier}\nCommit SHA:${commitSha}\n${messageToPost}`
+    messageToPost = `${commentIdentifier}\nCommit SHA: ${commitSha}\n${messageToPost}`
     if (useSameComment) {
       commentId = await findComment(
         githubClient,
@@ -98,7 +98,7 @@ async function run(): Promise<void> {
         )
       }
       messageToPost = `Current PR reduces the test coverage percentage by ${delta} for some tests`
-      messageToPost = `${deltaCommentIdentifier}\nCommit SHA:${commitSha}\n${messageToPost}`
+      messageToPost = `${deltaCommentIdentifier}\nCommit SHA: ${commitSha}\n${messageToPost}`
       await createOrUpdateComment(
         commentId,
         githubClient,

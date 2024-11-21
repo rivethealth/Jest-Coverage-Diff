@@ -2058,7 +2058,7 @@ function run() {
                 .trim();
             const diffChecker = new DiffChecker_1.DiffChecker(codeCoverageNew, codeCoverageOld);
             let messageToPost = `## Test coverage results :test_tube: \n
-    Code coverage diff between base branch:${branchNameBase} and head branch: ${branchNameHead} \n\n`;
+    Code coverage diff between base branch ${branchNameBase} and head branch ${branchNameHead} \n\n`;
             const coverageDetails = diffChecker.getCoverageDetails(!fullCoverage, `${currentDirectory}/`);
             if (coverageDetails.length === 0) {
                 messageToPost =
@@ -2069,7 +2069,7 @@ function run() {
                     'Status | File | % Stmts | % Branch | % Funcs | % Lines \n -----|-----|---------|----------|---------|------ \n';
                 messageToPost += coverageDetails.join('\n');
             }
-            messageToPost = `${commentIdentifier}\nCommit SHA:${commitSha}\n${messageToPost}`;
+            messageToPost = `${commentIdentifier}\nCommit SHA: ${commitSha}\n${messageToPost}`;
             if (useSameComment) {
                 commentId = yield findComment(githubClient, repoName, repoOwner, prNumber, commentIdentifier);
             }
@@ -2080,7 +2080,7 @@ function run() {
                     commentId = yield findComment(githubClient, repoName, repoOwner, prNumber, deltaCommentIdentifier);
                 }
                 messageToPost = `Current PR reduces the test coverage percentage by ${delta} for some tests`;
-                messageToPost = `${deltaCommentIdentifier}\nCommit SHA:${commitSha}\n${messageToPost}`;
+                messageToPost = `${deltaCommentIdentifier}\nCommit SHA: ${commitSha}\n${messageToPost}`;
                 yield createOrUpdateComment(commentId, githubClient, repoOwner, repoName, messageToPost, prNumber);
                 throw Error(messageToPost);
             }
