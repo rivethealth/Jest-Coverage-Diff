@@ -2032,8 +2032,8 @@ function run() {
             const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff'));
             const commandToRun = core.getInput('runCommand');
             const commandAfterSwitch = core.getInput('afterSwitchCommand');
-            const delta = Number(core.getInput('delta'));
-            const rawTotalDelta = core.getInput('total_delta');
+            const rawDelta = core.getInput('delta');
+            const rawTotalDelta = core.getInput('totalDelta');
             const githubClient = github.getOctokit(githubToken);
             const prNumber = core.getInput('prNumber');
             const branchNameBase = core.getInput('branchNameBase');
@@ -2041,10 +2041,8 @@ function run() {
             const useSameComment = JSON.parse(core.getInput('useSameComment'));
             const commentIdentifier = `<!-- codeCoverageDiffComment -->`;
             const deltaCommentIdentifier = `<!-- codeCoverageDeltaComment -->`;
-            let totalDelta = null;
-            if (rawTotalDelta !== null) {
-                totalDelta = Number(rawTotalDelta);
-            }
+            const delta = isNaN(rawDelta) ? null : +rawDelta;
+            const totalDelta = isNaN(rawTotalDelta) ? null : rawTotalDelta;
             let commentId = null;
             child_process_1.execSync(commandToRun);
             const codeCoverageNew = (JSON.parse(fs_1.default.readFileSync('coverage-summary.json').toString()));
@@ -6803,7 +6801,7 @@ class DiffChecker {
             for (const key of keys) {
                 if (diffCoverageData[key].oldPct !== diffCoverageData[key].newPct) {
                     const deltaToCompareWith = file === 'total' && totalDelta !== null ? totalDelta : delta;
-                    if (-this.getPercentageDiff(diffCoverageData[key]) > deltaToCompareWith) {
+                    if (-this.getPercentageDiff(diffCoverageData[key]) > deltaToCompareWith ?? 999) {
                         const percentageDiff = this.getPercentageDiff(diffCoverageData[key]);
                         core.info(`percentage Diff: ${percentageDiff} is greater than delta for ${file}`);
                         return true;

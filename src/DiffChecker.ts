@@ -69,7 +69,7 @@ export class DiffChecker {
   }
 
   checkIfTestCoverageFallsBelowDelta(
-    delta: number,
+    delta: number | null,
     totalDelta: number | null
   ): boolean {
     const files = Object.keys(this.diffCoverageReport)
@@ -94,7 +94,7 @@ export class DiffChecker {
           const deltaToCompareWith =
             file === 'total' && totalDelta !== null ? totalDelta : delta
           if (
-            -this.getPercentageDiff(diffCoverageData[key]) > deltaToCompareWith
+            -this.getPercentageDiff(diffCoverageData[key]) > deltaToCompareWith ?? 999
           ) {
             const percentageDiff = this.getPercentageDiff(diffCoverageData[key])
             core.info(

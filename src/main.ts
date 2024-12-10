@@ -17,28 +17,22 @@ async function run(): Promise<void> {
     const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff'))
     const commandToRun = core.getInput('runCommand')
     const commandAfterSwitch = core.getInput('afterSwitchCommand')
-    const delta = Number(core.getInput('delta'))
-    const rawTotalDelta = core.getInput('total_delta')
+    const rawDelta: string = core.getInput('delta')
+    const rawTotalDelta: string = core.getInput('totalDelta')
     const githubClient = github.getOctokit(githubToken)
-    const prNumber = core.getInput('prNumber'); //github.context.issue.number
-    const branchNameBase = core.getInput('branchNameBase'); //github.context.payload.pull_request?.base.ref
-    const branchNameHead = core.getInput('branchNameHead'); //github.context.payload.pull_request?.head.ref
+    const prNumber = core.getInput('prNumber');
+    const branchNameBase = core.getInput('branchNameBase');
+    const branchNameHead = core.getInput('branchNameHead');
     const useSameComment = JSON.parse(core.getInput('useSameComment'))
     const commentIdentifier = `<!-- codeCoverageDiffComment -->`
     const deltaCommentIdentifier = `<!-- codeCoverageDeltaComment -->`
-    let totalDelta = null
-    if (rawTotalDelta !== null) {
-      totalDelta = Number(rawTotalDelta)
-    }
+    const delta = isNaN(rawDelta) ? null : +rawDelta
+    const totalDelta = isNaN(rawTotalDelta) ? null : +rawTotalDelta
     let commentId = null
     execSync(commandToRun)
     const codeCoverageNew = <CoverageReport>(
       JSON.parse(fs.readFileSync('coverage-summary.json').toString())
     )
-    // Not needed when coverage-summary.json has already been acquired
-    //execSync('/usr/bin/git fetch')
-    //execSync('/usr/bin/git stash')
-    //execSync(`/usr/bin/git checkout --progress --force ${branchNameBase}`)
     if (commandAfterSwitch) {
       execSync(commandAfterSwitch)
     }

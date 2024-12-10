@@ -21,13 +21,13 @@ inputs:
     description: 'command to run after switching to default branch'
     default: null
   delta:
-    description: 'Difference between the old and final test coverage'
-    default: 100
-  total_delta:
-    description: 'Difference between the old and final test coverage at the total level'
+    description: 'Percent difference in any file"s coverage at which to fail the job e.g. 1'
+    default: null
+  totalDelta:
+    description: 'Percent difference in total codebase coverage at which to fail the job e.g. 1'
     default: null
   useSameComment:
-    description: 'While commenting on the PR update the exisiting comment'
+    description: 'While commenting on the PR update the existing comment'
     default: false
 branding:
   color: red
