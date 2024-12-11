@@ -33491,7 +33491,9 @@ async function run() {
         const commandToRun = core.getInput('runCommand');
         const commandAfterSwitch = core.getInput('afterSwitchCommand');
         const rawDelta = core.getInput('delta');
+        const delta = rawDelta === '' ? null : +rawDelta;
         const rawTotalDelta = core.getInput('totalDelta');
+        const totalDelta = rawTotalDelta === '' ? null : +rawTotalDelta;
         const githubClient = github.getOctokit(githubToken);
         const prNumber = core.getInput('prNumber');
         const branchNameBase = core.getInput('branchNameBase');
@@ -33499,8 +33501,6 @@ async function run() {
         const useSameComment = JSON.parse(core.getInput('useSameComment'));
         const commentIdentifier = `<!-- codeCoverageDiffComment -->`;
         const deltaCommentIdentifier = `<!-- codeCoverageDeltaComment -->`;
-        const delta = rawDelta === '' ? null : +rawDelta;
-        const totalDelta = rawTotalDelta === '' ? null : +rawTotalDelta;
         let commentId = null;
         (0, child_process_1.execSync)(commandToRun);
         const codeCoverageNew = (JSON.parse(fs_1.default.readFileSync('coverage-summary.json').toString()));

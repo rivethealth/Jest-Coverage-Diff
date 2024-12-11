@@ -1,67 +1,67 @@
-import * as core from '@actions/core'
-import * as github from '@actions/github'
-import { execSync } from 'child_process'
-import fs from 'fs'
-import { CoverageReport } from './Model/CoverageReport'
-import { DiffChecker } from './DiffChecker'
-import { Octokit } from '@octokit/core'
-import { PaginateInterface } from '@octokit/plugin-paginate-rest'
-import { RestEndpointMethods } from '@octokit/plugin-rest-endpoint-methods/dist-types/generated/method-types'
+import * as core from '@actions/core';
+import * as github from '@actions/github';
+import { execSync } from 'child_process';
+import fs from 'fs';
+import { CoverageReport } from './Model/CoverageReport';
+import { DiffChecker } from './DiffChecker';
+import { Octokit } from '@octokit/core';
+import { PaginateInterface } from '@octokit/plugin-paginate-rest';
+import { RestEndpointMethods } from '@octokit/plugin-rest-endpoint-methods/dist-types/generated/method-types';
 
 async function run(): Promise<void> {
   try {
-    const repoName = github.context.repo.repo
-    const repoOwner = github.context.repo.owner
-    const commitSha = github.context.sha
-    const githubToken = core.getInput('accessToken')
-    const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff'))
-    const commandToRun = core.getInput('runCommand')
-    const commandAfterSwitch = core.getInput('afterSwitchCommand')
-    const rawDelta = core.getInput('delta')
-    const delta = rawDelta === '' ? null : +rawDelta
-    const rawTotalDelta = core.getInput('totalDelta')
-    const totalDelta = rawTotalDelta === '' ? null : +rawTotalDelta
-    const githubClient = github.getOctokit(githubToken)
-    const prNumber = core.getInput('prNumber')
-    const branchNameBase = core.getInput('branchNameBase')
-    const branchNameHead = core.getInput('branchNameHead')
-    const useSameComment = JSON.parse(core.getInput('useSameComment'))
-    const commentIdentifier = `<!-- codeCoverageDiffComment -->`
-    const deltaCommentIdentifier = `<!-- codeCoverageDeltaComment -->`
-    let commentId = null
-    execSync(commandToRun)
+    const repoName = github.context.repo.repo;
+    const repoOwner = github.context.repo.owner;
+    const commitSha = github.context.sha;
+    const githubToken = core.getInput('accessToken');
+    const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff'));
+    const commandToRun = core.getInput('runCommand');
+    const commandAfterSwitch = core.getInput('afterSwitchCommand');
+    const rawDelta = core.getInput('delta');
+    const delta = rawDelta === '' ? null : +rawDelta;
+    const rawTotalDelta = core.getInput('totalDelta');
+    const totalDelta = rawTotalDelta === '' ? null : +rawTotalDelta;
+    const githubClient = github.getOctokit(githubToken);
+    const prNumber = core.getInput('prNumber');
+    const branchNameBase = core.getInput('branchNameBase');
+    const branchNameHead = core.getInput('branchNameHead');
+    const useSameComment = JSON.parse(core.getInput('useSameComment'));
+    const commentIdentifier = `<!-- codeCoverageDiffComment -->`;
+    const deltaCommentIdentifier = `<!-- codeCoverageDeltaComment -->`;
+    let commentId = null;
+    execSync(commandToRun);
     const codeCoverageNew = <CoverageReport>(
       JSON.parse(fs.readFileSync('coverage-summary.json').toString())
-    )
+    );
     if (commandAfterSwitch) {
-      execSync(commandAfterSwitch)
+      execSync(commandAfterSwitch);
     }
-    execSync(commandToRun)
+    execSync(commandToRun);
     const codeCoverageOld = <CoverageReport>(
       JSON.parse(fs.readFileSync('coverage-summary.json').toString())
-    )
+    );
     const currentDirectory = execSync('pwd')
       .toString()
-      .trim()
+      .trim();
     const diffChecker: DiffChecker = new DiffChecker(
       codeCoverageNew,
       codeCoverageOld
-    )
+    );
     let messageToPost = `## Test coverage results :test_tube: \n
-    Code coverage diff between base branch ${branchNameBase} and head branch ${branchNameHead} \n\n`
+    Code coverage diff between base branch ${branchNameBase} and head branch ${branchNameHead} \n\n`;
     const coverageDetails = diffChecker.getCoverageDetails(
       !fullCoverage,
       `${currentDirectory}/`
-    )
+    );
     if (coverageDetails.length === 0) {
       messageToPost =
-        'No changes to code coverage between the base branch and the head branch'
+        'No changes to code coverage between the base branch and the head branch';
     } else {
       messageToPost +=
-        'Status | File | % Stmts | % Branch | % Funcs | % Lines \n -----|-----|---------|----------|---------|------ \n'
-      messageToPost += coverageDetails.join('\n')
+        'Status | File | % Stmts | % Branch | % Funcs | % Lines \n -----|-----|---------|----------|---------|------ \n';
+      messageToPost += coverageDetails.join('\n');
     }
-    messageToPost = `${commentIdentifier}\nCommit SHA: ${commitSha}\n${messageToPost}`
+    messageToPost = `${commentIdentifier}\nCommit SHA: ${commitSha}\n${messageToPost}`;
     if (useSameComment) {
       commentId = await findComment(
         githubClient,
@@ -69,7 +69,7 @@ async function run(): Promise<void> {
         repoOwner,
         +prNumber,
         commentIdentifier
-      )
+      );
     }
     await createOrUpdateComment(
       commentId,
@@ -78,7 +78,7 @@ async function run(): Promise<void> {
       repoName,
       messageToPost,
       +prNumber
-    )
+    );
 
     // check if the test coverage is falling below delta/tolerance.
     if (diffChecker.checkIfTestCoverageFallsBelowDelta(delta, totalDelta)) {
@@ -89,10 +89,10 @@ async function run(): Promise<void> {
           repoOwner,
           +prNumber,
           deltaCommentIdentifier
-        )
+        );
       }
-      messageToPost = `Current PR reduces the test coverage percentage by ${delta} for some tests`
-      messageToPost = `${deltaCommentIdentifier}\nCommit SHA: ${commitSha}\n${messageToPost}`
+      messageToPost = `Current PR reduces the test coverage percentage by ${delta} for some tests`;
+      messageToPost = `${deltaCommentIdentifier}\nCommit SHA: ${commitSha}\n${messageToPost}`;
       await createOrUpdateComment(
         commentId,
         githubClient,
@@ -100,11 +100,11 @@ async function run(): Promise<void> {
         repoName,
         messageToPost,
         +prNumber
-      )
-      throw Error(messageToPost)
+      );
+      throw Error(messageToPost);
     }
   } catch (error) {
-    core.setFailed(<Error>error)
+    core.setFailed(<Error>error);
   }
 }
 
@@ -123,14 +123,14 @@ async function createOrUpdateComment(
       repo: repoName,
       comment_id: commentId,
       body: messageToPost
-    })
+    });
   } else {
     await githubClient.issues.createComment({
       repo: repoName,
       owner: repoOwner,
       body: messageToPost,
       issue_number: prNumber
-    })
+    });
   }
 }
 
@@ -146,14 +146,14 @@ async function findComment(
     owner: repoOwner,
     repo: repoName,
     issue_number: prNumber
-  })
+  });
 
   for (const comment of comments.data) {
     if (comment.body?.startsWith(identifier)) {
-      return comment.id
+      return comment.id;
     }
   }
-  return 0
+  return 0;
 }
 
-run()
+run();
