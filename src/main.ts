@@ -1,12 +1,12 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
-import {execSync} from 'child_process'
+import { execSync } from 'child_process'
 import fs from 'fs'
-import {CoverageReport} from './Model/CoverageReport'
-import {DiffChecker} from './DiffChecker'
-import {Octokit} from '@octokit/core'
-import {PaginateInterface} from '@octokit/plugin-paginate-rest'
-import {RestEndpointMethods} from '@octokit/plugin-rest-endpoint-methods/dist-types/generated/method-types'
+import { CoverageReport } from './Model/CoverageReport'
+import { DiffChecker } from './DiffChecker'
+import { Octokit } from '@octokit/core'
+import { PaginateInterface } from '@octokit/plugin-paginate-rest'
+import { RestEndpointMethods } from '@octokit/plugin-rest-endpoint-methods/dist-types/generated/method-types'
 
 async function run(): Promise<void> {
   try {
@@ -17,17 +17,17 @@ async function run(): Promise<void> {
     const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff'))
     const commandToRun = core.getInput('runCommand')
     const commandAfterSwitch = core.getInput('afterSwitchCommand')
-    const rawDelta: string = core.getInput('delta')
-    const rawTotalDelta: string = core.getInput('totalDelta')
+    const rawDelta = core.getInput('delta')
+    const delta = rawDelta === '' ? null : +rawDelta
+    const rawTotalDelta = core.getInput('totalDelta')
+    const totalDelta = rawTotalDelta === '' ? null : +rawTotalDelta
     const githubClient = github.getOctokit(githubToken)
-    const prNumber = core.getInput('prNumber');
-    const branchNameBase = core.getInput('branchNameBase');
-    const branchNameHead = core.getInput('branchNameHead');
+    const prNumber = core.getInput('prNumber')
+    const branchNameBase = core.getInput('branchNameBase')
+    const branchNameHead = core.getInput('branchNameHead')
     const useSameComment = JSON.parse(core.getInput('useSameComment'))
     const commentIdentifier = `<!-- codeCoverageDiffComment -->`
     const deltaCommentIdentifier = `<!-- codeCoverageDeltaComment -->`
-    const delta = isNaN(rawDelta) ? null : +rawDelta
-    const totalDelta = isNaN(rawTotalDelta) ? null : +rawTotalDelta
     let commentId = null
     execSync(commandToRun)
     const codeCoverageNew = <CoverageReport>(
@@ -67,7 +67,7 @@ async function run(): Promise<void> {
         githubClient,
         repoName,
         repoOwner,
-        prNumber,
+        +prNumber,
         commentIdentifier
       )
     }
@@ -77,7 +77,7 @@ async function run(): Promise<void> {
       repoOwner,
       repoName,
       messageToPost,
-      prNumber
+      +prNumber
     )
 
     // check if the test coverage is falling below delta/tolerance.
@@ -87,7 +87,7 @@ async function run(): Promise<void> {
           githubClient,
           repoName,
           repoOwner,
-          prNumber,
+          +prNumber,
           deltaCommentIdentifier
         )
       }
@@ -99,19 +99,19 @@ async function run(): Promise<void> {
         repoOwner,
         repoName,
         messageToPost,
-        prNumber
+        +prNumber
       )
       throw Error(messageToPost)
     }
   } catch (error) {
-    core.setFailed(error)
+    core.setFailed(<Error>error)
   }
 }
 
 async function createOrUpdateComment(
   commentId: number | null,
-  githubClient: {[x: string]: any} & {[x: string]: any} & Octokit &
-    RestEndpointMethods & {paginate: PaginateInterface},
+  githubClient: { [x: string]: any } & { [x: string]: any } & Octokit &
+    RestEndpointMethods & { paginate: PaginateInterface },
   repoOwner: string,
   repoName: string,
   messageToPost: string,
@@ -135,8 +135,8 @@ async function createOrUpdateComment(
 }
 
 async function findComment(
-  githubClient: {[x: string]: any} & {[x: string]: any} & Octokit &
-    RestEndpointMethods & {paginate: PaginateInterface},
+  githubClient: { [x: string]: any } & { [x: string]: any } & Octokit &
+    RestEndpointMethods & { paginate: PaginateInterface },
   repoName: string,
   repoOwner: string,
   prNumber: number,
@@ -149,7 +149,7 @@ async function findComment(
   })
 
   for (const comment of comments.data) {
-    if (comment.body.startsWith(identifier)) {
+    if (comment.body?.startsWith(identifier)) {
       return comment.id
     }
   }

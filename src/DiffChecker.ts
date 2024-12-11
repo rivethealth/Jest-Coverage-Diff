@@ -1,9 +1,9 @@
 import * as core from '@actions/core'
-import {CoverageReport} from './Model/CoverageReport'
-import {DiffCoverageReport} from './Model/DiffCoverageReport'
-import {CoverageData} from './Model/CoverageData'
-import {DiffFileCoverageData} from './Model/DiffFileCoverageData'
-import {DiffCoverageData} from './Model/DiffCoverageData'
+import { CoverageReport } from './Model/CoverageReport'
+import { DiffCoverageReport } from './Model/DiffCoverageReport'
+import { CoverageData } from './Model/CoverageData'
+import { DiffFileCoverageData } from './Model/DiffFileCoverageData'
+import { DiffCoverageData } from './Model/DiffCoverageData'
 
 const increasedCoverageIcon = ':green_circle:'
 const decreasedCoverageIcon = ':red_circle:'
@@ -91,9 +91,8 @@ export class DiffChecker {
       }
       for (const key of keys) {
         if (diffCoverageData[key].oldPct !== diffCoverageData[key].newPct) {
-          const deltaToCompareWith =
-            file === 'total' ? totalDelta : delta
-	  if (deltaToCompareWith === null) continue;
+          const deltaToCompareWith = file === 'total' ? totalDelta : delta
+          if (deltaToCompareWith === null) continue
           if (
             -this.getPercentageDiff(diffCoverageData[key]) > deltaToCompareWith
           ) {
