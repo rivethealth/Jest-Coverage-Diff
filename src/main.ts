@@ -25,7 +25,6 @@ async function run(): Promise<void> {
     const branchNameHead = core.getInput('branchNameHead');
     const useSameComment: boolean = JSON.parse(core.getInput('useSameComment'));
     const commentIdentifier = `<!-- codeCoverageDiffComment -->`;
-    const deltaCommentIdentifier = `<!-- codeCoverageDeltaComment -->`;
     let commentId = null;
     execSync(commandToRun);
     const codeCoverageNew = <CoverageReport>(
@@ -78,31 +77,9 @@ async function run(): Promise<void> {
       +prNumber
     );
 
-    // check if the test coverage is falling below delta/tolerance.
-    if (diffChecker.checkIfTestCoverageFallsBelowDelta(delta, totalDelta)) {
-      if (useSameComment) {
-        commentId = await findComment(
-          githubClient,
-          repoName,
-          repoOwner,
-          +prNumber,
-          deltaCommentIdentifier
-        );
-      }
-      messageToPost = `Current PR reduces the test coverage percentage by ${delta} for some tests`;
-      messageToPost = `${deltaCommentIdentifier}\nCommit SHA: ${commitSha}\n${messageToPost}`;
-      await createOrUpdateComment(
-        commentId,
-        githubClient,
-        repoOwner,
-        repoName,
-        messageToPost,
-        +prNumber
-      );
-      throw Error(messageToPost);
-    }
+    diffChecker.checkIfTestCoverageFallsBelowDelta(delta, totalDelta);
   } catch (error) {
-    core.setFailed(<Error>error);
+    core.setFailed((<Error>error).message);
   }
 }
 

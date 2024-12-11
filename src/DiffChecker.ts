@@ -71,7 +71,7 @@ export class DiffChecker {
   checkIfTestCoverageFallsBelowDelta(
     delta: number | null,
     totalDelta: number | null
-  ): boolean {
+  ): void {
     const files = Object.keys(this.diffCoverageReport);
     for (const file of files) {
       const diffCoverageData = this.diffCoverageReport[file];
@@ -99,16 +99,13 @@ export class DiffChecker {
             const percentageDiff = this.getPercentageDiff(
               diffCoverageData[key]
             );
-            core.info(
-              `percentage Diff: ${percentageDiff} is greater than delta for ${file}`
+            throw new Error(
+              `Test coverage change of ${percentageDiff}% is greater than max allowed (${deltaToCompareWith}%) for ${key} in ${file}`
             );
-            return true;
           }
         }
       }
     }
-
-    return false;
   }
 
   private createDiffLine(
