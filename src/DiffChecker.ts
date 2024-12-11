@@ -92,9 +92,10 @@ export class DiffChecker {
       for (const key of keys) {
         if (diffCoverageData[key].oldPct !== diffCoverageData[key].newPct) {
           const deltaToCompareWith =
-            file === 'total' && totalDelta !== null ? totalDelta : delta
+            file === 'total' ? totalDelta : delta
+	  if (deltaToCompareWith === null) continue;
           if (
-            -this.getPercentageDiff(diffCoverageData[key]) > deltaToCompareWith ?? 999
+            -this.getPercentageDiff(diffCoverageData[key]) > deltaToCompareWith
           ) {
             const percentageDiff = this.getPercentageDiff(diffCoverageData[key])
             core.info(
