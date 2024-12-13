@@ -33377,13 +33377,11 @@ class DiffChecker {
                         continue;
                     if (-this.getPercentageDiff(diffCoverageData[key]) > deltaToCompareWith) {
                         const percentageDiff = this.getPercentageDiff(diffCoverageData[key]);
-                        core.info(`percentage Diff: ${percentageDiff} is greater than delta for ${file}`);
-                        return true;
+                        throw new Error(`Test coverage change of ${percentageDiff}% is greater than max allowed (${deltaToCompareWith}%) for ${key} in ${file}`);
                     }
                 }
             }
         }
-        return false;
     }
     createDiffLine(name, diffFileCoverageData) {
         // No old coverage found so that means we added a new file coverage
@@ -33490,17 +33488,15 @@ async function run() {
         const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff'));
         const commandToRun = core.getInput('runCommand');
         const commandAfterSwitch = core.getInput('afterSwitchCommand');
-        const rawDelta = core.getInput('delta');
-        const delta = rawDelta === '' ? null : +rawDelta;
-        const rawTotalDelta = core.getInput('totalDelta');
-        const totalDelta = rawTotalDelta === '' ? null : +rawTotalDelta;
+        const delta = JSON.parse(core.getInput('delta'));
+        const totalDelta = JSON.parse(core.getInput('totalDelta'));
         const githubClient = github.getOctokit(githubToken);
         const prNumber = core.getInput('prNumber');
         const branchNameBase = core.getInput('branchNameBase');
         const branchNameHead = core.getInput('branchNameHead');
+        const coverageReportUrl = core.getInput('coverageReportUrl');
         const useSameComment = JSON.parse(core.getInput('useSameComment'));
         const commentIdentifier = `<!-- codeCoverageDiffComment -->`;
-        const deltaCommentIdentifier = `<!-- codeCoverageDeltaComment -->`;
         let commentId = null;
         (0, child_process_1.execSync)(commandToRun);
         const codeCoverageNew = (JSON.parse(fs_1.default.readFileSync('coverage-summary.json').toString()));
@@ -33513,36 +33509,32 @@ async function run() {
             .toString()
             .trim();
         const diffChecker = new DiffChecker_1.DiffChecker(codeCoverageNew, codeCoverageOld);
-        let messageToPost = `## Test coverage results :test_tube: \n
-    Code coverage diff between base branch ${branchNameBase} and head branch ${branchNameHead} \n\n`;
+        let messageToPost = `${commentIdentifier}For commit ${commitSha}
+
+${coverageReportUrl
+            ? `[Full coverage report download](${coverageReportUrl})`
+            : `(Full coverage report URL not set)`}
+
+## Test coverage summary :test_tube:
+
+`;
         const coverageDetails = diffChecker.getCoverageDetails(!fullCoverage, `${currentDirectory}/`);
         if (coverageDetails.length === 0) {
-            messageToPost =
-                'No changes to code coverage between the base branch and the head branch';
+            messageToPost += 'No changes to code coverage.';
         }
         else {
             messageToPost +=
                 'Status | File | % Stmts | % Branch | % Funcs | % Lines \n -----|-----|---------|----------|---------|------ \n';
             messageToPost += coverageDetails.join('\n');
         }
-        messageToPost = `${commentIdentifier}\nCommit SHA: ${commitSha}\n${messageToPost}`;
         if (useSameComment) {
             commentId = await findComment(githubClient, repoName, repoOwner, +prNumber, commentIdentifier);
         }
         await createOrUpdateComment(commentId, githubClient, repoOwner, repoName, messageToPost, +prNumber);
-        // check if the test coverage is falling below delta/tolerance.
-        if (diffChecker.checkIfTestCoverageFallsBelowDelta(delta, totalDelta)) {
-            if (useSameComment) {
-                commentId = await findComment(githubClient, repoName, repoOwner, +prNumber, deltaCommentIdentifier);
-            }
-            messageToPost = `Current PR reduces the test coverage percentage by ${delta} for some tests`;
-            messageToPost = `${deltaCommentIdentifier}\nCommit SHA: ${commitSha}\n${messageToPost}`;
-            await createOrUpdateComment(commentId, githubClient, repoOwner, repoName, messageToPost, +prNumber);
-            throw Error(messageToPost);
-        }
+        diffChecker.checkIfTestCoverageFallsBelowDelta(delta, totalDelta);
     }
     catch (error) {
-        core.setFailed(error);
+        core.setFailed(error.message);
     }
 }
 async function createOrUpdateComment(commentId, githubClient, repoOwner, repoName, messageToPost, prNumber) {
