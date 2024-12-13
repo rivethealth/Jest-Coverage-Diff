@@ -23,7 +23,9 @@ async function run(): Promise<void> {
     const prNumber = core.getInput('prNumber');
     const branchNameBase = core.getInput('branchNameBase');
     const branchNameHead = core.getInput('branchNameHead');
+    const coverageReportUrl = core.getInput('coverageReportUrl');
     const useSameComment: boolean = JSON.parse(core.getInput('useSameComment'));
+
     const commentIdentifier = `<!-- codeCoverageDiffComment -->`;
     let commentId = null;
     execSync(commandToRun);
@@ -44,21 +46,28 @@ async function run(): Promise<void> {
       codeCoverageNew,
       codeCoverageOld
     );
-    let messageToPost = `## Test coverage results :test_tube: \n
-    Code coverage diff between base branch ${branchNameBase} and head branch ${branchNameHead} \n\n`;
+    let messageToPost = `${commentIdentifier}For commit ${commitSha}
+
+${
+  coverageReportUrl
+    ? `[Full coverage report download](${coverageReportUrl})`
+    : `(Full coverage report URL not set)`
+}
+
+## Test coverage summary :test_tube:
+
+`;
     const coverageDetails = diffChecker.getCoverageDetails(
       !fullCoverage,
       `${currentDirectory}/`
     );
     if (coverageDetails.length === 0) {
-      messageToPost =
-        'No changes to code coverage between the base branch and the head branch';
+      messageToPost += 'No changes to code coverage.';
     } else {
       messageToPost +=
         'Status | File | % Stmts | % Branch | % Funcs | % Lines \n -----|-----|---------|----------|---------|------ \n';
       messageToPost += coverageDetails.join('\n');
     }
-    messageToPost = `${commentIdentifier}\nCommit SHA: ${commitSha}\n${messageToPost}`;
     if (useSameComment) {
       commentId = await findComment(
         githubClient,

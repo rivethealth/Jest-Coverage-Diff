@@ -6,11 +6,13 @@ inputs:
     description: 'access token required to comment on a pr'
     default: ${{ github.token }}
   prNumber:
-    description: 'pr number'
+    description: 'PR number e.g. 789'
   branchNameBase:
-    description: 'the branch the pr wants to merge into e.g. main'
+    description: 'The branch the pr wants to merge into e.g. main'
   branchNameHead:
-    description: 'the branch the pr is requesting review on'
+    description: 'The branch the pr is requesting review on'
+  coverageReportUrl:
+    description: 'URL to download the coverage report artifact'
   fullCoverageDiff:
     description: 'get the full coverage with diff or only the diff'
     default: false
