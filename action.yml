@@ -18,7 +18,6 @@ inputs:
     default: false
   runCommand:
     description: 'custom command to get json-summary'
-    default: 'npx jest --coverage --coverageReporters="json-summary" --coverageDirectory="./"'
   afterSwitchCommand:
     description: 'command to run after switching to default branch'
     default: null
@@ -30,7 +29,7 @@ inputs:
     default: null
   useSameComment:
     description: 'While commenting on the PR update the existing comment'
-    default: false
+    default: true
 branding:
   color: red
   icon: git-pull-request
