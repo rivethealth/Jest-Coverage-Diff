@@ -33534,7 +33534,8 @@ ${coverageReportUrl
         diffChecker.checkIfTestCoverageFallsBelowDelta(delta, totalDelta);
     }
     catch (error) {
-        core.setFailed(error.message);
+        core.setFailed(`${error.message}
+at ${error.stack}`);
     }
 }
 async function createOrUpdateComment(commentId, githubClient, repoOwner, repoName, messageToPost, prNumber) {

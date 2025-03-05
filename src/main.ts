@@ -88,7 +88,8 @@ ${
 
     diffChecker.checkIfTestCoverageFallsBelowDelta(delta, totalDelta);
   } catch (error) {
-    core.setFailed((<Error>error).message);
+    core.setFailed(`${(<Error>error).message}
+at ${(<Error>error).stack}`);
   }
 }
 
