@@ -33481,23 +33481,25 @@ const fs_1 = __importDefault(__nccwpck_require__(9896));
 const DiffChecker_1 = __nccwpck_require__(313);
 async function run() {
     try {
-        core.setFailed(JSON.stringify(core.getInput('delta')));
-        return;
         const repoName = github.context.repo.repo;
         const repoOwner = github.context.repo.owner;
         const commitSha = github.context.sha;
-        const githubToken = core.getInput('accessToken');
-        const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff'));
-        const commandToRun = core.getInput('runCommand');
-        const commandAfterSwitch = core.getInput('afterSwitchCommand');
-        const delta = JSON.parse(core.getInput('delta'));
-        const totalDelta = JSON.parse(core.getInput('totalDelta'));
+        const githubToken = core.getInput('accessToken', { required: true });
+        const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff', { required: true }));
+        const commandToRun = core.getInput('runCommand', { required: true });
+        const commandAfterSwitch = core.getInput('afterSwitchCommand', {
+            required: true
+        });
+        const delta = JSON.parse(core.getInput('delta', { required: true }));
+        const totalDelta = JSON.parse(core.getInput('totalDelta', { required: true }));
         const githubClient = github.getOctokit(githubToken);
-        const prNumber = core.getInput('prNumber');
-        const branchNameBase = core.getInput('branchNameBase');
-        const branchNameHead = core.getInput('branchNameHead');
-        const coverageReportUrl = core.getInput('coverageReportUrl');
-        const useSameComment = JSON.parse(core.getInput('useSameComment'));
+        const prNumber = core.getInput('prNumber', { required: true });
+        const branchNameBase = core.getInput('branchNameBase', { required: true });
+        const branchNameHead = core.getInput('branchNameHead', { required: true });
+        const coverageReportUrl = core.getInput('coverageReportUrl', {
+            required: true
+        });
+        const useSameComment = JSON.parse(core.getInput('useSameComment', { required: true }));
         const commentIdentifier = `<!-- codeCoverageDiffComment -->`;
         let commentId = null;
         (0, child_process_1.execSync)(commandToRun);

@@ -10,23 +10,33 @@ import { RestEndpointMethods } from '@octokit/plugin-rest-endpoint-methods/dist-
 
 async function run(): Promise<void> {
   try {
-    core.setFailed(JSON.stringify(core.getInput('delta')));
-    return;
     const repoName = github.context.repo.repo;
     const repoOwner = github.context.repo.owner;
     const commitSha = github.context.sha;
-    const githubToken = core.getInput('accessToken');
-    const fullCoverage: boolean = JSON.parse(core.getInput('fullCoverageDiff'));
-    const commandToRun = core.getInput('runCommand');
-    const commandAfterSwitch = core.getInput('afterSwitchCommand');
-    const delta: number | null = JSON.parse(core.getInput('delta'));
-    const totalDelta: number | null = JSON.parse(core.getInput('totalDelta'));
+    const githubToken = core.getInput('accessToken', { required: true });
+    const fullCoverage: boolean = JSON.parse(
+      core.getInput('fullCoverageDiff', { required: true })
+    );
+    const commandToRun = core.getInput('runCommand', { required: true });
+    const commandAfterSwitch = core.getInput('afterSwitchCommand', {
+      required: true
+    });
+    const delta: number | null = JSON.parse(
+      core.getInput('delta', { required: true })
+    );
+    const totalDelta: number | null = JSON.parse(
+      core.getInput('totalDelta', { required: true })
+    );
     const githubClient = github.getOctokit(githubToken);
-    const prNumber = core.getInput('prNumber');
-    const branchNameBase = core.getInput('branchNameBase');
-    const branchNameHead = core.getInput('branchNameHead');
-    const coverageReportUrl = core.getInput('coverageReportUrl');
-    const useSameComment: boolean = JSON.parse(core.getInput('useSameComment'));
+    const prNumber = core.getInput('prNumber', { required: true });
+    const branchNameBase = core.getInput('branchNameBase', { required: true });
+    const branchNameHead = core.getInput('branchNameHead', { required: true });
+    const coverageReportUrl = core.getInput('coverageReportUrl', {
+      required: true
+    });
+    const useSameComment: boolean = JSON.parse(
+      core.getInput('useSameComment', { required: true })
+    );
 
     const commentIdentifier = `<!-- codeCoverageDiffComment -->`;
     let commentId = null;
