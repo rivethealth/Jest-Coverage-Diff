@@ -33481,27 +33481,22 @@ const fs_1 = __importDefault(__nccwpck_require__(9896));
 const DiffChecker_1 = __nccwpck_require__(313);
 async function run() {
     try {
+        // Get inputs
         const repoName = github.context.repo.repo;
         const repoOwner = github.context.repo.owner;
         const commitSha = github.context.sha;
-        const githubToken = core.getInput('accessToken', { required: true });
+        const accessToken = core.getInput('accessToken', {
+            required: true
+        });
+        const prNumber = core.getInput('prNumber', { required: true });
+        const coverageReportUrl = core.getInput('coverageReportUrl');
+        const commandToRun = core.getInput('runCommand');
+        const commandAfterSwitch = core.getInput('afterSwitchCommand');
+        const useSameComment = JSON.parse(core.getInput('useSameComment', { required: true }));
         const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff', { required: true }));
-        const commandToRun = core.getInput('runCommand', {
-            required: true
-        });
-        const commandAfterSwitch = core.getInput('afterSwitchCommand', {
-            required: true
-        });
         const delta = JSON.parse(core.getInput('delta', { required: true }));
         const totalDelta = JSON.parse(core.getInput('totalDelta', { required: true }));
-        const githubClient = github.getOctokit(githubToken);
-        const prNumber = core.getInput('prNumber', { required: true });
-        const coverageReportUrl = core.getInput('coverageReportUrl', {
-            required: true
-        });
-        const useSameComment = JSON.parse(core.getInput('useSameComment', { required: true }));
-        const commentIdentifier = `<!-- codeCoverageDiffComment -->`;
-        let commentId = null;
+        // Do diffing
         (0, child_process_1.execSync)(commandToRun);
         const codeCoverageNew = (JSON.parse(fs_1.default.readFileSync('coverage-summary.json').toString()));
         if (commandAfterSwitch) {
@@ -33513,6 +33508,10 @@ async function run() {
             .toString()
             .trim();
         const diffChecker = new DiffChecker_1.DiffChecker(codeCoverageNew, codeCoverageOld);
+        // Post comment on PR
+        const githubClient = github.getOctokit(accessToken);
+        const commentIdentifier = `<!-- codeCoverageDiffComment -->`;
+        let commentId = null;
         let messageToPost = `${commentIdentifier}For commit ${commitSha}
 
 ${coverageReportUrl

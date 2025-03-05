@@ -10,36 +10,37 @@ import { RestEndpointMethods } from '@octokit/plugin-rest-endpoint-methods/dist-
 
 async function run(): Promise<void> {
   try {
+    // Get inputs
+
     const repoName = github.context.repo.repo;
     const repoOwner = github.context.repo.owner;
     const commitSha = github.context.sha;
-    const githubToken = core.getInput('accessToken', { required: true });
+
+    const accessToken: string = core.getInput('accessToken', {
+      required: true
+    });
+    const prNumber: string = core.getInput('prNumber', { required: true });
+
+    const coverageReportUrl: string = core.getInput('coverageReportUrl');
+    const commandToRun: string = core.getInput('runCommand');
+    const commandAfterSwitch: string = core.getInput('afterSwitchCommand');
+
+    const useSameComment: boolean = JSON.parse(
+      core.getInput('useSameComment', { required: true })
+    );
     const fullCoverage: boolean = JSON.parse(
       core.getInput('fullCoverageDiff', { required: true })
     );
-    const commandToRun: string = core.getInput('runCommand', {
-      required: true
-    });
-    const commandAfterSwitch: string = core.getInput('afterSwitchCommand', {
-      required: true
-    });
+
     const delta: number | null = JSON.parse(
       core.getInput('delta', { required: true })
     );
     const totalDelta: number | null = JSON.parse(
       core.getInput('totalDelta', { required: true })
     );
-    const githubClient = github.getOctokit(githubToken);
-    const prNumber: string = core.getInput('prNumber', { required: true });
-    const coverageReportUrl: string = core.getInput('coverageReportUrl', {
-      required: true
-    });
-    const useSameComment: boolean = JSON.parse(
-      core.getInput('useSameComment', { required: true })
-    );
 
-    const commentIdentifier = `<!-- codeCoverageDiffComment -->`;
-    let commentId = null;
+    // Do diffing
+
     execSync(commandToRun);
     const codeCoverageNew = <CoverageReport>(
       JSON.parse(fs.readFileSync('coverage-summary.json').toString())
@@ -58,6 +59,12 @@ async function run(): Promise<void> {
       codeCoverageNew,
       codeCoverageOld
     );
+
+    // Post comment on PR
+
+    const githubClient = github.getOctokit(accessToken);
+    const commentIdentifier = `<!-- codeCoverageDiffComment -->`;
+    let commentId = null;
     let messageToPost = `${commentIdentifier}For commit ${commitSha}
 
 ${
