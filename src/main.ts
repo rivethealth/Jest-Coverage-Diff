@@ -10,6 +10,8 @@ import { RestEndpointMethods } from '@octokit/plugin-rest-endpoint-methods/dist-
 
 async function run(): Promise<void> {
   try {
+    core.setFailed(JSON.stringify(core.getInput('delta')));
+    return;
     const repoName = github.context.repo.repo;
     const repoOwner = github.context.repo.owner;
     const commitSha = github.context.sha;
@@ -88,8 +90,7 @@ ${
 
     diffChecker.checkIfTestCoverageFallsBelowDelta(delta, totalDelta);
   } catch (error) {
-    core.setFailed(`${(<Error>error).message}
-at ${(<Error>error).stack}`);
+    core.setFailed(`${(<Error>error).stack}`);
   }
 }
 

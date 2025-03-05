@@ -33481,6 +33481,8 @@ const fs_1 = __importDefault(__nccwpck_require__(9896));
 const DiffChecker_1 = __nccwpck_require__(313);
 async function run() {
     try {
+        core.setFailed(JSON.stringify(core.getInput('delta')));
+        return;
         const repoName = github.context.repo.repo;
         const repoOwner = github.context.repo.owner;
         const commitSha = github.context.sha;
@@ -33534,8 +33536,7 @@ ${coverageReportUrl
         diffChecker.checkIfTestCoverageFallsBelowDelta(delta, totalDelta);
     }
     catch (error) {
-        core.setFailed(`${error.message}
-at ${error.stack}`);
+        core.setFailed(`${error.stack}`);
     }
 }
 async function createOrUpdateComment(commentId, githubClient, repoOwner, repoName, messageToPost, prNumber) {
