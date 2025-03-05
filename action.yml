@@ -13,14 +13,16 @@ inputs:
     description: 'The branch the pr is requesting review on'
   coverageReportUrl:
     description: 'URL to download the coverage report artifact'
+    default: ''
   fullCoverageDiff:
     description: 'get the full coverage with diff or only the diff'
     default: false
   runCommand:
     description: 'custom command to get json-summary'
+    default: ''
   afterSwitchCommand:
     description: 'command to run after switching to default branch'
-    default: null
+    default: ''
   delta:
     description: 'Percent difference in any file"s coverage at which to fail the job e.g. 1'
     default: null

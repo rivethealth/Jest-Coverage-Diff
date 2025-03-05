@@ -33486,7 +33486,9 @@ async function run() {
         const commitSha = github.context.sha;
         const githubToken = core.getInput('accessToken', { required: true });
         const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff', { required: true }));
-        const commandToRun = core.getInput('runCommand', { required: true });
+        const commandToRun = core.getInput('runCommand', {
+            required: true
+        });
         const commandAfterSwitch = core.getInput('afterSwitchCommand', {
             required: true
         });
@@ -33494,8 +33496,6 @@ async function run() {
         const totalDelta = JSON.parse(core.getInput('totalDelta', { required: true }));
         const githubClient = github.getOctokit(githubToken);
         const prNumber = core.getInput('prNumber', { required: true });
-        const branchNameBase = core.getInput('branchNameBase', { required: true });
-        const branchNameHead = core.getInput('branchNameHead', { required: true });
         const coverageReportUrl = core.getInput('coverageReportUrl', {
             required: true
         });

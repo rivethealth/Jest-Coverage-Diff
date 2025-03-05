@@ -17,8 +17,10 @@ async function run(): Promise<void> {
     const fullCoverage: boolean = JSON.parse(
       core.getInput('fullCoverageDiff', { required: true })
     );
-    const commandToRun = core.getInput('runCommand', { required: true });
-    const commandAfterSwitch = core.getInput('afterSwitchCommand', {
+    const commandToRun: string = core.getInput('runCommand', {
+      required: true
+    });
+    const commandAfterSwitch: string = core.getInput('afterSwitchCommand', {
       required: true
     });
     const delta: number | null = JSON.parse(
@@ -28,10 +30,8 @@ async function run(): Promise<void> {
       core.getInput('totalDelta', { required: true })
     );
     const githubClient = github.getOctokit(githubToken);
-    const prNumber = core.getInput('prNumber', { required: true });
-    const branchNameBase = core.getInput('branchNameBase', { required: true });
-    const branchNameHead = core.getInput('branchNameHead', { required: true });
-    const coverageReportUrl = core.getInput('coverageReportUrl', {
+    const prNumber: string = core.getInput('prNumber', { required: true });
+    const coverageReportUrl: string = core.getInput('coverageReportUrl', {
       required: true
     });
     const useSameComment: boolean = JSON.parse(
