@@ -63,7 +63,7 @@ async function run(): Promise<void> {
     const githubClient = github.getOctokit(accessToken);
     const commentIdentifier = `<!-- codeCoverageDiffComment -->`;
     let commentId = null;
-    let messageToPost = `${commentIdentifier}For commit ${commitSha}
+    let messageToPost = `${commentIdentifier}## Test coverage for commit ${commitSha}
 
 ${
   coverageReportUrl

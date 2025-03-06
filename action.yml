@@ -8,12 +8,6 @@ inputs:
   prNumber:
     description: 'PR number e.g. 789'
 
-  # Unused
-  branchNameBase:
-    description: 'The branch the pr wants to merge into e.g. main'
-  branchNameHead:
-    description: 'The branch the pr is requesting review on'
-
   coverageReportUrl:
     description: 'URL to download the coverage report artifact'
     default: ''
