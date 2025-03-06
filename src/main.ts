@@ -88,7 +88,7 @@ ${
       messageToPost += 'No changes to code coverage.';
     } else {
       messageToPost +=
-        'Status | File | % Stmts | % Branch | % Funcs | % Lines \n -----|-----|---------|----------|---------|------ \n';
+        ':bar_graph: | File | Stmts | Brnches | Funcs | Lines \n - |------|-------|---------|-------|------ \n';
       messageToPost += coverageDetails.join('\n');
     }
     if (useSameComment) {

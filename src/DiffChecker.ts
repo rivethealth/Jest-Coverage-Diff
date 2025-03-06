@@ -5,10 +5,10 @@ import { CoverageData } from './Model/CoverageData';
 import { DiffFileCoverageData } from './Model/DiffFileCoverageData';
 import { DiffCoverageData } from './Model/DiffCoverageData';
 
-const increasedCoverageIcon = ':green_circle:';
-const decreasedCoverageIcon = ':red_circle:';
-const newCoverageIcon = ':sparkles: :new:';
-const removedCoverageIcon = ':x:';
+const increasedCoverageIcon = ':green_apple:';
+const decreasedCoverageIcon = ':apple:';
+const newCoverageIcon = ':new:';
+const removedCoverageIcon = ':fire:';
 
 export class DiffChecker {
   private diffCoverageReport: DiffCoverageReport = {};
@@ -49,14 +49,14 @@ export class DiffChecker {
       if (this.compareCoverageValues(this.diffCoverageReport[key]) !== 0) {
         returnStrings.push(
           this.createDiffLine(
-            key.replace(currentDirectory, ''),
+            this.getPrettyFilepath(key).replace(currentDirectory, ''),
             this.diffCoverageReport[key]
           )
         );
       } else {
         if (!diffOnly) {
           returnStrings.push(
-            `${key.replace(currentDirectory, '')} | ${
+            `${this.getPrettyFilepath(key).replace(currentDirectory, '')} | ${
               this.diffCoverageReport[key].statements.newPct
             } | ${this.diffCoverageReport[key].branches.newPct} | ${
               this.diffCoverageReport[key].functions.newPct
@@ -121,21 +121,22 @@ export class DiffChecker {
       coverageData => coverageData.newPct === 0
     );
     if (fileNewCoverage) {
-      return ` ${newCoverageIcon} | **${name}** | **${diffFileCoverageData.statements.newPct}** | **${diffFileCoverageData.branches.newPct}** | **${diffFileCoverageData.functions.newPct}** | **${diffFileCoverageData.lines.newPct}**`;
+      return ` ${newCoverageIcon} | **${name}** | **${diffFileCoverageData.statements.newPct}%** | **${diffFileCoverageData.branches.newPct}%** | **${diffFileCoverageData.functions.newPct}%** | **${diffFileCoverageData.lines.newPct}%**`;
     } else if (fileRemovedCoverage) {
-      return ` ${removedCoverageIcon} | ~~${name}~~ | ~~${diffFileCoverageData.statements.oldPct}~~ | ~~${diffFileCoverageData.branches.oldPct}~~ | ~~${diffFileCoverageData.functions.oldPct}~~ | ~~${diffFileCoverageData.lines.oldPct}~~`;
+      return ` ${removedCoverageIcon} | ~~${name}~~ | ~~${diffFileCoverageData.statements.oldPct}%~~ | ~~${diffFileCoverageData.branches.oldPct}%~~ | ~~${diffFileCoverageData.functions.oldPct}%~~ | ~~${diffFileCoverageData.lines.oldPct}%~~`;
     }
     // Coverage existed before so calculate the diff status
     const statusIcon = this.getStatusIcon(diffFileCoverageData);
-    return ` ${statusIcon} | ${name} | ${
+    const fixed2 = (n: number | undefined) => n?.toFixed(2);
+    return ` ${statusIcon} | ${name} | ${fixed2(
       diffFileCoverageData.statements.newPct
-    } **(${this.getPercentageDiff(diffFileCoverageData.statements)})** | ${
+    )}%${this.getPrettyPctDiff(diffFileCoverageData.statements)} | ${fixed2(
       diffFileCoverageData.branches.newPct
-    } **(${this.getPercentageDiff(diffFileCoverageData.branches)})** | ${
+    )}%${this.getPrettyPctDiff(diffFileCoverageData.branches)} | ${fixed2(
       diffFileCoverageData.functions.newPct
-    } **(${this.getPercentageDiff(diffFileCoverageData.functions)})** | ${
+    )}%${this.getPrettyPctDiff(diffFileCoverageData.functions)} | ${fixed2(
       diffFileCoverageData.lines.newPct
-    } **(${this.getPercentageDiff(diffFileCoverageData.lines)})**`;
+    )}%${this.getPrettyPctDiff(diffFileCoverageData.lines)}`;
   }
 
   private compareCoverageValues(
@@ -156,9 +157,7 @@ export class DiffChecker {
     return coverageData?.pct || 0;
   }
 
-  private getStatusIcon(
-    diffFileCoverageData: DiffFileCoverageData
-  ): ':green_circle:' | ':red_circle:' {
+  private getStatusIcon(diffFileCoverageData: DiffFileCoverageData): string {
     let overallDiff = 0;
     Object.values(diffFileCoverageData).forEach(coverageData => {
       overallDiff = overallDiff + this.getPercentageDiff(coverageData);
@@ -174,5 +173,18 @@ export class DiffChecker {
     const diff = Number(diffData.newPct) - Number(diffData.oldPct);
     // round off the diff to 2 decimal places
     return Math.round((diff + Number.EPSILON) * 100) / 100;
+  }
+
+  private getPrettyPctDiff(diffData: DiffCoverageData): string {
+    const number = this.getPercentageDiff(diffData);
+    if (number === 0) return '';
+    return ` **(${number > 0 ? '+' : ''}${number.toFixed(2)})**`;
+  }
+
+  private getPrettyFilepath(filepath: string) {
+    if (filepath === 'total') {
+      return '(Total of all files checked)';
+    }
+    return filepath;
   }
 }
