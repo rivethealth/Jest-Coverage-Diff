@@ -11,6 +11,9 @@ inputs:
   coverageReportUrl:
     description: 'URL to download the coverage report artifact'
     default: ''
+  coverageReportExpiry:
+    description: 'Expiry datetime for coverage report artifact'
+    default: ''
   runCommand:
     description: 'custom command to get json-summary'
     default: ''

@@ -22,6 +22,7 @@ async function run(): Promise<void> {
     const prNumber: string = core.getInput('prNumber', { required: true });
 
     const coverageReportUrl: string = core.getInput('coverageReportUrl');
+    const coverageReportExpiry: string = core.getInput('coverageReportExpiry');
     const commandToRun: string = core.getInput('runCommand');
     const commandAfterSwitch: string = core.getInput('afterSwitchCommand');
 
@@ -63,11 +64,16 @@ async function run(): Promise<void> {
     const githubClient = github.getOctokit(accessToken);
     const commentIdentifier = `<!-- codeCoverageDiffComment -->`;
     let commentId = null;
-    let messageToPost = `${commentIdentifier}## Test coverage for commit ${commitSha}
+    let messageToPost = `${commentIdentifier}
+## Test coverage for commit ${commitSha}
 
 ${
   coverageReportUrl
-    ? `[Full coverage report download](${coverageReportUrl})`
+    ? `[Full coverage report download](${coverageReportUrl}) ${
+        coverageReportExpiry
+          ? `(expires ${coverageReportExpiry}; rerun all CI jobs to regenerate)`
+          : ''
+      }`
     : `(Full coverage report URL not set)`
 }
 

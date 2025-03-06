@@ -33490,6 +33490,7 @@ async function run() {
         });
         const prNumber = core.getInput('prNumber', { required: true });
         const coverageReportUrl = core.getInput('coverageReportUrl');
+        const coverageReportExpiry = core.getInput('coverageReportExpiry');
         const commandToRun = core.getInput('runCommand');
         const commandAfterSwitch = core.getInput('afterSwitchCommand');
         const useSameComment = JSON.parse(core.getInput('useSameComment', { required: true }));
@@ -33512,10 +33513,13 @@ async function run() {
         const githubClient = github.getOctokit(accessToken);
         const commentIdentifier = `<!-- codeCoverageDiffComment -->`;
         let commentId = null;
-        let messageToPost = `${commentIdentifier}## Test coverage for commit ${commitSha}
+        let messageToPost = `${commentIdentifier}
+## Test coverage for commit ${commitSha}
 
 ${coverageReportUrl
-            ? `[Full coverage report download](${coverageReportUrl})`
+            ? `[Full coverage report download](${coverageReportUrl}) ${coverageReportExpiry
+                ? `(expires ${coverageReportExpiry}; rerun all CI jobs to regenerate)`
+                : ''}`
             : `(Full coverage report URL not set)`}
 
 ## Test coverage summary :test_tube:
