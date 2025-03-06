@@ -33494,8 +33494,8 @@ async function run() {
         const commandAfterSwitch = core.getInput('afterSwitchCommand');
         const useSameComment = JSON.parse(core.getInput('useSameComment', { required: true }));
         const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff', { required: true }));
-        const delta = JSON.parse(core.getInput('delta', { required: true }));
-        const totalDelta = JSON.parse(core.getInput('totalDelta', { required: true }));
+        const delta = core.getInput('delta') === '' ? null : +core.getInput('delta');
+        const totalDelta = core.getInput('totalDelta') === '' ? null : +core.getInput('totalDelta');
         // Do diffing
         (0, child_process_1.execSync)(commandToRun);
         const codeCoverageNew = (JSON.parse(fs_1.default.readFileSync('coverage-summary.json').toString()));

@@ -32,12 +32,10 @@ async function run(): Promise<void> {
       core.getInput('fullCoverageDiff', { required: true })
     );
 
-    const delta: number | null = JSON.parse(
-      core.getInput('delta', { required: true })
-    );
-    const totalDelta: number | null = JSON.parse(
-      core.getInput('totalDelta', { required: true })
-    );
+    const delta: number | null =
+      core.getInput('delta') === '' ? null : +core.getInput('delta');
+    const totalDelta: number | null =
+      core.getInput('totalDelta') === '' ? null : +core.getInput('totalDelta');
 
     // Do diffing
 

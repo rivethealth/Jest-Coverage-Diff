@@ -7,31 +7,36 @@ inputs:
     default: ${{ github.token }}
   prNumber:
     description: 'PR number e.g. 789'
+
+  # Unused
   branchNameBase:
     description: 'The branch the pr wants to merge into e.g. main'
   branchNameHead:
     description: 'The branch the pr is requesting review on'
+
   coverageReportUrl:
     description: 'URL to download the coverage report artifact'
     default: ''
-  fullCoverageDiff:
-    description: 'get the full coverage with diff or only the diff'
-    default: false
   runCommand:
     description: 'custom command to get json-summary'
     default: ''
   afterSwitchCommand:
     description: 'command to run after switching to default branch'
     default: ''
-  delta:
-    description: 'Percent difference in any file"s coverage at which to fail the job e.g. 1'
-    default: null
-  totalDelta:
-    description: 'Percent difference in total codebase coverage at which to fail the job e.g. 1'
-    default: null
+
   useSameComment:
     description: 'While commenting on the PR update the existing comment'
     default: true
+  fullCoverageDiff:
+    description: 'get the full coverage with diff or only the diff'
+    default: false
+
+  delta:
+    description: 'Percent difference in any file"s coverage at which to fail the job e.g. 1'
+    default: ''
+  totalDelta:
+    description: 'Percent difference in total codebase coverage at which to fail the job e.g. 1'
+    default: ''
 branding:
   color: red
   icon: git-pull-request
