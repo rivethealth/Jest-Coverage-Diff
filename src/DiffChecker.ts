@@ -5,10 +5,10 @@ import { CoverageData } from './Model/CoverageData';
 import { DiffFileCoverageData } from './Model/DiffFileCoverageData';
 import { DiffCoverageData } from './Model/DiffCoverageData';
 
-const increasedCoverageIcon = ':green_apple:';
-const decreasedCoverageIcon = ':apple:';
-const newCoverageIcon = ':new:';
-const removedCoverageIcon = ':fire:';
+export const increasedCoverageIcon = ':chart_with_upwards_trend:';
+export const decreasedCoverageIcon = ':chart_with_downwards_trend:';
+export const newCoverageIcon = ':new:';
+export const removedCoverageIcon = ':fire:';
 
 export class DiffChecker {
   private diffCoverageReport: DiffCoverageReport = {};
