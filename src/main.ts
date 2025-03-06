@@ -87,7 +87,7 @@ ${
     if (coverageDetails.length === 0) {
       messageToPost += 'No changes to code coverage.';
     } else {
-      messageToPost += ':bar_chart: | File | Stmts | Brnches | Funcs | Lines\n';
+      messageToPost += '&nbsp; | File | Stmts | Brnches | Funcs | Lines\n';
       messageToPost += ':-|:-|:-|:-|:-|:-\n';
       messageToPost += coverageDetails.join('\n');
     }

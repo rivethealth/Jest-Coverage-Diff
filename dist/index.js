@@ -33312,8 +33312,8 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DiffChecker = exports.removedCoverageIcon = exports.newCoverageIcon = exports.decreasedCoverageIcon = exports.increasedCoverageIcon = void 0;
 const core = __importStar(__nccwpck_require__(7484));
-exports.increasedCoverageIcon = ':chart_with_upwards_trend:';
-exports.decreasedCoverageIcon = ':chart_with_downwards_trend:';
+exports.increasedCoverageIcon = ':chart:'; // "Chart Increasing with Yen"
+exports.decreasedCoverageIcon = ':small_red_triangle_down:';
 exports.newCoverageIcon = ':new:';
 exports.removedCoverageIcon = ':fire:';
 class DiffChecker {
@@ -33435,7 +33435,7 @@ class DiffChecker {
     }
     getPrettyFilepath(filepath) {
         if (filepath === 'total') {
-            return '(Total of all files checked)';
+            return '(Total of all source files)';
         }
         return filepath;
     }
@@ -33543,7 +33543,7 @@ ${coverageReportUrl
             messageToPost += 'No changes to code coverage.';
         }
         else {
-            messageToPost += ':bar_chart: | File | Stmts | Brnches | Funcs | Lines\n';
+            messageToPost += '&nbsp; | File | Stmts | Brnches | Funcs | Lines\n';
             messageToPost += ':-|:-|:-|:-|:-|:-\n';
             messageToPost += coverageDetails.join('\n');
         }

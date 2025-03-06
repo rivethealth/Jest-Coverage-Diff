@@ -5,8 +5,8 @@ import { CoverageData } from './Model/CoverageData';
 import { DiffFileCoverageData } from './Model/DiffFileCoverageData';
 import { DiffCoverageData } from './Model/DiffCoverageData';
 
-export const increasedCoverageIcon = ':chart_with_upwards_trend:';
-export const decreasedCoverageIcon = ':chart_with_downwards_trend:';
+export const increasedCoverageIcon = ':chart:'; // "Chart Increasing with Yen"
+export const decreasedCoverageIcon = ':small_red_triangle_down:';
 export const newCoverageIcon = ':new:';
 export const removedCoverageIcon = ':fire:';
 
@@ -183,7 +183,7 @@ export class DiffChecker {
 
   private getPrettyFilepath(filepath: string) {
     if (filepath === 'total') {
-      return '(Total of all files checked)';
+      return '(Total of all source files)';
     }
     return filepath;
   }
