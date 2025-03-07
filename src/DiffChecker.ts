@@ -121,22 +121,22 @@ export class DiffChecker {
       coverageData => coverageData.newPct === 0
     );
     if (fileNewCoverage) {
-      return ` ${newCoverageIcon} | **${name}** | **${diffFileCoverageData.statements.newPct}%** | **${diffFileCoverageData.branches.newPct}%** | **${diffFileCoverageData.functions.newPct}%** | **${diffFileCoverageData.lines.newPct}%**`;
+      return ` ${newCoverageIcon} | **${name}** | **${diffFileCoverageData.statements.newPct}%**<br>&nbsp; | **${diffFileCoverageData.branches.newPct}%**<br>&nbsp; | **${diffFileCoverageData.functions.newPct}%**<br>&nbsp; | **${diffFileCoverageData.lines.newPct}%**<br>&nbsp;`;
     } else if (fileRemovedCoverage) {
-      return ` ${removedCoverageIcon} | ~~${name}~~ | ~~${diffFileCoverageData.statements.oldPct}%~~ | ~~${diffFileCoverageData.branches.oldPct}%~~ | ~~${diffFileCoverageData.functions.oldPct}%~~ | ~~${diffFileCoverageData.lines.oldPct}%~~`;
+      return ` ${removedCoverageIcon} | ~~${name}~~ | ~~${diffFileCoverageData.statements.oldPct}%~~<br>&nbsp; | ~~${diffFileCoverageData.branches.oldPct}%~~<br>&nbsp; | ~~${diffFileCoverageData.functions.oldPct}%~~<br>&nbsp; | ~~${diffFileCoverageData.lines.oldPct}%~~<br>&nbsp;`;
     }
     // Coverage existed before so calculate the diff status
     const statusIcon = this.getStatusIcon(diffFileCoverageData);
     const fixed2 = (n: number | undefined) => n?.toFixed(2);
     return ` ${statusIcon} | ${name} | ${fixed2(
       diffFileCoverageData.statements.newPct
-    )}%${this.getPrettyPctDiff(diffFileCoverageData.statements)} | ${fixed2(
+    )}%<br>${this.getPrettyPctDiff(diffFileCoverageData.statements)} | ${fixed2(
       diffFileCoverageData.branches.newPct
-    )}%${this.getPrettyPctDiff(diffFileCoverageData.branches)} | ${fixed2(
+    )}%<br>${this.getPrettyPctDiff(diffFileCoverageData.branches)} | ${fixed2(
       diffFileCoverageData.functions.newPct
-    )}%${this.getPrettyPctDiff(diffFileCoverageData.functions)} | ${fixed2(
+    )}%<br>${this.getPrettyPctDiff(diffFileCoverageData.functions)} | ${fixed2(
       diffFileCoverageData.lines.newPct
-    )}%${this.getPrettyPctDiff(diffFileCoverageData.lines)}`;
+    )}%<br>${this.getPrettyPctDiff(diffFileCoverageData.lines)}`;
   }
 
   private compareCoverageValues(
@@ -177,7 +177,7 @@ export class DiffChecker {
 
   private getPrettyPctDiff(diffData: DiffCoverageData): string {
     const number = this.getPercentageDiff(diffData);
-    if (number === 0) return '';
+    if (number === 0) return '&nbsp;';
     return ` **(${number > 0 ? '+' : ''}${number.toFixed(2)})**`;
   }
 

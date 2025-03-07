@@ -77,7 +77,7 @@ ${
     : `(Full coverage report URL not set)`
 }
 
-## Test coverage summary :test_tube:
+### :bar_chart:
 
 `;
     const coverageDetails = diffChecker.getCoverageDetails(
