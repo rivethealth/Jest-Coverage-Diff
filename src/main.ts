@@ -29,7 +29,7 @@ async function run(): Promise<void> {
     const useSameComment: boolean = JSON.parse(
       core.getInput('useSameComment', { required: true })
     );
-    const fullCoverage: boolean = JSON.parse(
+    const fullCoverageDiff: boolean = JSON.parse(
       core.getInput('fullCoverageDiff', { required: true })
     );
 
@@ -81,7 +81,7 @@ ${
 
 `;
     const coverageDetails = diffChecker.getCoverageDetails(
-      !fullCoverage,
+      fullCoverageDiff,
       `${currentDirectory}/`
     );
     if (coverageDetails.length === 0) {

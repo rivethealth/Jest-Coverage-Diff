@@ -33310,10 +33310,11 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.DiffChecker = exports.removedCoverageIcon = exports.newCoverageIcon = exports.decreasedCoverageIcon = exports.increasedCoverageIcon = void 0;
+exports.DiffChecker = exports.removedCoverageIcon = exports.newCoverageIcon = exports.unchangedCoverageIcon = exports.decreasedCoverageIcon = exports.increasedCoverageIcon = void 0;
 const core = __importStar(__nccwpck_require__(7484));
 exports.increasedCoverageIcon = ':chart:'; // "Chart Increasing with Yen"
 exports.decreasedCoverageIcon = ':small_red_triangle_down:';
+exports.unchangedCoverageIcon = '&nbsp;';
 exports.newCoverageIcon = ':new:';
 exports.removedCoverageIcon = ':fire:';
 class DiffChecker {
@@ -33343,7 +33344,7 @@ class DiffChecker {
             };
         }
     }
-    getCoverageDetails(diffOnly, currentDirectory) {
+    getCoverageDetails(fullCoverageDiff, currentDirectory) {
         const keys = Object.keys(this.diffCoverageReport);
         const returnStrings = [];
         for (const key of keys) {
@@ -33351,8 +33352,10 @@ class DiffChecker {
                 returnStrings.push(this.createDiffLine(this.getPrettyFilepath(key).replace(currentDirectory, ''), this.diffCoverageReport[key]));
             }
             else {
-                if (!diffOnly) {
-                    returnStrings.push(`${this.getPrettyFilepath(key).replace(currentDirectory, '')} | ${this.diffCoverageReport[key].statements.newPct} | ${this.diffCoverageReport[key].branches.newPct} | ${this.diffCoverageReport[key].functions.newPct} | ${this.diffCoverageReport[key].lines.newPct}`);
+                if (fullCoverageDiff) {
+                    const statusIcon = exports.unchangedCoverageIcon;
+                    const name = this.getPrettyFilepath(key).replace(currentDirectory, '');
+                    returnStrings.push(`${statusIcon} | ${name} | ${fixed2(this.diffCoverageReport[key].statements.newPct)}%<br>&nbsp; | ${fixed2(this.diffCoverageReport[key].branches.newPct)}%<br>&nbsp; | ${fixed2(this.diffCoverageReport[key].functions.newPct)}%<br>&nbsp; | ${fixed2(this.diffCoverageReport[key].lines.newPct)}%<br>&nbsp;`);
                 }
             }
         }
@@ -33396,7 +33399,6 @@ class DiffChecker {
         }
         // Coverage existed before so calculate the diff status
         const statusIcon = this.getStatusIcon(diffFileCoverageData);
-        const fixed2 = (n) => n?.toFixed(2);
         return `${statusIcon} | ${name} | ${fixed2(diffFileCoverageData.statements.newPct)}%<br>${this.getPrettyPctDiff(diffFileCoverageData.statements)} | ${fixed2(diffFileCoverageData.branches.newPct)}%<br>${this.getPrettyPctDiff(diffFileCoverageData.branches)} | ${fixed2(diffFileCoverageData.functions.newPct)}%<br>${this.getPrettyPctDiff(diffFileCoverageData.functions)} | ${fixed2(diffFileCoverageData.lines.newPct)}%<br>${this.getPrettyPctDiff(diffFileCoverageData.lines)}`;
     }
     compareCoverageValues(diffCoverageData) {
@@ -33419,7 +33421,12 @@ class DiffChecker {
         if (overallDiff < 0) {
             return exports.decreasedCoverageIcon;
         }
-        return exports.increasedCoverageIcon;
+        else if (overallDiff > 0) {
+            return exports.increasedCoverageIcon;
+        }
+        else {
+            return exports.unchangedCoverageIcon;
+        }
     }
     getPercentageDiff(diffData) {
         // get diff
@@ -33441,6 +33448,9 @@ class DiffChecker {
     }
 }
 exports.DiffChecker = DiffChecker;
+function fixed2(n) {
+    return n?.toFixed(2);
+}
 
 
 /***/ }),
@@ -33507,7 +33517,7 @@ async function run() {
         const commandToRun = core.getInput('runCommand');
         const commandAfterSwitch = core.getInput('afterSwitchCommand');
         const useSameComment = JSON.parse(core.getInput('useSameComment', { required: true }));
-        const fullCoverage = JSON.parse(core.getInput('fullCoverageDiff', { required: true }));
+        const fullCoverageDiff = JSON.parse(core.getInput('fullCoverageDiff', { required: true }));
         const delta = core.getInput('delta') === '' ? null : +core.getInput('delta');
         const totalDelta = core.getInput('totalDelta') === '' ? null : +core.getInput('totalDelta');
         // Do diffing
@@ -33538,7 +33548,7 @@ ${coverageReportUrl
 ### Percentage changes compared to main/base :bar_chart:
 
 `;
-        const coverageDetails = diffChecker.getCoverageDetails(!fullCoverage, `${currentDirectory}/`);
+        const coverageDetails = diffChecker.getCoverageDetails(fullCoverageDiff, `${currentDirectory}/`);
         if (coverageDetails.length === 0) {
             messageToPost += 'No changes to code coverage.';
         }

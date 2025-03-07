@@ -7,6 +7,7 @@ import { DiffCoverageData } from './Model/DiffCoverageData';
 
 export const increasedCoverageIcon = ':chart:'; // "Chart Increasing with Yen"
 export const decreasedCoverageIcon = ':small_red_triangle_down:';
+export const unchangedCoverageIcon = '&nbsp;';
 export const newCoverageIcon = ':new:';
 export const removedCoverageIcon = ':fire:';
 
@@ -42,7 +43,10 @@ export class DiffChecker {
     }
   }
 
-  getCoverageDetails(diffOnly: boolean, currentDirectory: string): string[] {
+  getCoverageDetails(
+    fullCoverageDiff: boolean,
+    currentDirectory: string
+  ): string[] {
     const keys = Object.keys(this.diffCoverageReport);
     const returnStrings: string[] = [];
     for (const key of keys) {
@@ -54,13 +58,22 @@ export class DiffChecker {
           )
         );
       } else {
-        if (!diffOnly) {
+        if (fullCoverageDiff) {
+          const statusIcon = unchangedCoverageIcon;
+          const name = this.getPrettyFilepath(key).replace(
+            currentDirectory,
+            ''
+          );
           returnStrings.push(
-            `${this.getPrettyFilepath(key).replace(currentDirectory, '')} | ${
+            `${statusIcon} | ${name} | ${fixed2(
               this.diffCoverageReport[key].statements.newPct
-            } | ${this.diffCoverageReport[key].branches.newPct} | ${
+            )}%<br>&nbsp; | ${fixed2(
+              this.diffCoverageReport[key].branches.newPct
+            )}%<br>&nbsp; | ${fixed2(
               this.diffCoverageReport[key].functions.newPct
-            } | ${this.diffCoverageReport[key].lines.newPct}`
+            )}%<br>&nbsp; | ${fixed2(
+              this.diffCoverageReport[key].lines.newPct
+            )}%<br>&nbsp;`
           );
         }
       }
@@ -127,7 +140,6 @@ export class DiffChecker {
     }
     // Coverage existed before so calculate the diff status
     const statusIcon = this.getStatusIcon(diffFileCoverageData);
-    const fixed2 = (n: number | undefined) => n?.toFixed(2);
     return `${statusIcon} | ${name} | ${fixed2(
       diffFileCoverageData.statements.newPct
     )}%<br>${this.getPrettyPctDiff(diffFileCoverageData.statements)} | ${fixed2(
@@ -164,8 +176,11 @@ export class DiffChecker {
     });
     if (overallDiff < 0) {
       return decreasedCoverageIcon;
+    } else if (overallDiff > 0) {
+      return increasedCoverageIcon;
+    } else {
+      return unchangedCoverageIcon;
     }
-    return increasedCoverageIcon;
   }
 
   private getPercentageDiff(diffData: DiffCoverageData): number {
@@ -187,4 +202,8 @@ export class DiffChecker {
     }
     return filepath;
   }
+}
+
+function fixed2(n: number | undefined): string | undefined {
+  return n?.toFixed(2);
 }
