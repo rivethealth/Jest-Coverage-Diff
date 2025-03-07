@@ -121,14 +121,14 @@ export class DiffChecker {
       coverageData => coverageData.newPct === 0
     );
     if (fileNewCoverage) {
-      return ` ${newCoverageIcon} | **${name}** | **${diffFileCoverageData.statements.newPct}%**<br>&nbsp; | **${diffFileCoverageData.branches.newPct}%**<br>&nbsp; | **${diffFileCoverageData.functions.newPct}%**<br>&nbsp; | **${diffFileCoverageData.lines.newPct}%**<br>&nbsp;`;
+      return `${newCoverageIcon} | **${name}** | **${diffFileCoverageData.statements.newPct}%**<br>&nbsp; | **${diffFileCoverageData.branches.newPct}%**<br>&nbsp; | **${diffFileCoverageData.functions.newPct}%**<br>&nbsp; | **${diffFileCoverageData.lines.newPct}%**<br>&nbsp;`;
     } else if (fileRemovedCoverage) {
-      return ` ${removedCoverageIcon} | ~~${name}~~ | ~~${diffFileCoverageData.statements.oldPct}%~~<br>&nbsp; | ~~${diffFileCoverageData.branches.oldPct}%~~<br>&nbsp; | ~~${diffFileCoverageData.functions.oldPct}%~~<br>&nbsp; | ~~${diffFileCoverageData.lines.oldPct}%~~<br>&nbsp;`;
+      return `${removedCoverageIcon} | ~~${name}~~ | ~~${diffFileCoverageData.statements.oldPct}%~~<br>&nbsp; | ~~${diffFileCoverageData.branches.oldPct}%~~<br>&nbsp; | ~~${diffFileCoverageData.functions.oldPct}%~~<br>&nbsp; | ~~${diffFileCoverageData.lines.oldPct}%~~<br>&nbsp;`;
     }
     // Coverage existed before so calculate the diff status
     const statusIcon = this.getStatusIcon(diffFileCoverageData);
     const fixed2 = (n: number | undefined) => n?.toFixed(2);
-    return ` ${statusIcon} | ${name} | ${fixed2(
+    return `${statusIcon} | ${name} | ${fixed2(
       diffFileCoverageData.statements.newPct
     )}%<br>${this.getPrettyPctDiff(diffFileCoverageData.statements)} | ${fixed2(
       diffFileCoverageData.branches.newPct
@@ -178,7 +178,7 @@ export class DiffChecker {
   private getPrettyPctDiff(diffData: DiffCoverageData): string {
     const number = this.getPercentageDiff(diffData);
     if (number === 0) return '&nbsp;';
-    return ` **(${number > 0 ? '+' : ''}${number.toFixed(2)})**`;
+    return `**(${number > 0 ? '+' : ''}${number.toFixed(2)})**`;
   }
 
   private getPrettyFilepath(filepath: string) {

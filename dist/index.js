@@ -33389,15 +33389,15 @@ class DiffChecker {
         // No new coverage found so that means we deleted a file coverage
         const fileRemovedCoverage = Object.values(diffFileCoverageData).every(coverageData => coverageData.newPct === 0);
         if (fileNewCoverage) {
-            return ` ${exports.newCoverageIcon} | **${name}** | **${diffFileCoverageData.statements.newPct}%**<br>&nbsp; | **${diffFileCoverageData.branches.newPct}%**<br>&nbsp; | **${diffFileCoverageData.functions.newPct}%**<br>&nbsp; | **${diffFileCoverageData.lines.newPct}%**<br>&nbsp;`;
+            return `${exports.newCoverageIcon} | **${name}** | **${diffFileCoverageData.statements.newPct}%**<br>&nbsp; | **${diffFileCoverageData.branches.newPct}%**<br>&nbsp; | **${diffFileCoverageData.functions.newPct}%**<br>&nbsp; | **${diffFileCoverageData.lines.newPct}%**<br>&nbsp;`;
         }
         else if (fileRemovedCoverage) {
-            return ` ${exports.removedCoverageIcon} | ~~${name}~~ | ~~${diffFileCoverageData.statements.oldPct}%~~<br>&nbsp; | ~~${diffFileCoverageData.branches.oldPct}%~~<br>&nbsp; | ~~${diffFileCoverageData.functions.oldPct}%~~<br>&nbsp; | ~~${diffFileCoverageData.lines.oldPct}%~~<br>&nbsp;`;
+            return `${exports.removedCoverageIcon} | ~~${name}~~ | ~~${diffFileCoverageData.statements.oldPct}%~~<br>&nbsp; | ~~${diffFileCoverageData.branches.oldPct}%~~<br>&nbsp; | ~~${diffFileCoverageData.functions.oldPct}%~~<br>&nbsp; | ~~${diffFileCoverageData.lines.oldPct}%~~<br>&nbsp;`;
         }
         // Coverage existed before so calculate the diff status
         const statusIcon = this.getStatusIcon(diffFileCoverageData);
         const fixed2 = (n) => n?.toFixed(2);
-        return ` ${statusIcon} | ${name} | ${fixed2(diffFileCoverageData.statements.newPct)}%<br>${this.getPrettyPctDiff(diffFileCoverageData.statements)} | ${fixed2(diffFileCoverageData.branches.newPct)}%<br>${this.getPrettyPctDiff(diffFileCoverageData.branches)} | ${fixed2(diffFileCoverageData.functions.newPct)}%<br>${this.getPrettyPctDiff(diffFileCoverageData.functions)} | ${fixed2(diffFileCoverageData.lines.newPct)}%<br>${this.getPrettyPctDiff(diffFileCoverageData.lines)}`;
+        return `${statusIcon} | ${name} | ${fixed2(diffFileCoverageData.statements.newPct)}%<br>${this.getPrettyPctDiff(diffFileCoverageData.statements)} | ${fixed2(diffFileCoverageData.branches.newPct)}%<br>${this.getPrettyPctDiff(diffFileCoverageData.branches)} | ${fixed2(diffFileCoverageData.functions.newPct)}%<br>${this.getPrettyPctDiff(diffFileCoverageData.functions)} | ${fixed2(diffFileCoverageData.lines.newPct)}%<br>${this.getPrettyPctDiff(diffFileCoverageData.lines)}`;
     }
     compareCoverageValues(diffCoverageData) {
         const keys = Object.keys(diffCoverageData);
@@ -33431,7 +33431,7 @@ class DiffChecker {
         const number = this.getPercentageDiff(diffData);
         if (number === 0)
             return '&nbsp;';
-        return ` **(${number > 0 ? '+' : ''}${number.toFixed(2)})**`;
+        return `**(${number > 0 ? '+' : ''}${number.toFixed(2)})**`;
     }
     getPrettyFilepath(filepath) {
         if (filepath === 'total') {
@@ -33535,7 +33535,7 @@ ${coverageReportUrl
                 : ''}`
             : `(Full coverage report URL not set)`}
 
-### :bar_chart:
+### Percentage changes compared to main/base :bar_chart:
 
 `;
         const coverageDetails = diffChecker.getCoverageDetails(!fullCoverage, `${currentDirectory}/`);

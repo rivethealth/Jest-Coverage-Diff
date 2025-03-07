@@ -77,7 +77,7 @@ ${
     : `(Full coverage report URL not set)`
 }
 
-### :bar_chart:
+### Percentage changes compared to main/base :bar_chart:
 
 `;
     const coverageDetails = diffChecker.getCoverageDetails(
