@@ -33392,10 +33392,10 @@ class DiffChecker {
         // No new coverage found so that means we deleted a file coverage
         const fileRemovedCoverage = Object.values(diffFileCoverageData).every(coverageData => coverageData.newPct === 0);
         if (fileNewCoverage) {
-            return `${exports.newCoverageIcon} | **${name}** | **${diffFileCoverageData.statements.newPct}%**<br>&nbsp; | **${diffFileCoverageData.branches.newPct}%**<br>&nbsp; | **${diffFileCoverageData.functions.newPct}%**<br>&nbsp; | **${diffFileCoverageData.lines.newPct}%**<br>&nbsp;`;
+            return `${exports.newCoverageIcon} | **${name}** | **${fixed2(diffFileCoverageData.statements.newPct)}%**<br>&nbsp; | **${fixed2(diffFileCoverageData.branches.newPct)}%**<br>&nbsp; | **${fixed2(diffFileCoverageData.functions.newPct)}%**<br>&nbsp; | **${fixed2(diffFileCoverageData.lines.newPct)}%**<br>&nbsp;`;
         }
         else if (fileRemovedCoverage) {
-            return `${exports.removedCoverageIcon} | ~~${name}~~ | ~~${diffFileCoverageData.statements.oldPct}%~~<br>&nbsp; | ~~${diffFileCoverageData.branches.oldPct}%~~<br>&nbsp; | ~~${diffFileCoverageData.functions.oldPct}%~~<br>&nbsp; | ~~${diffFileCoverageData.lines.oldPct}%~~<br>&nbsp;`;
+            return `${exports.removedCoverageIcon} | ~~${name}~~ | ~~${fixed2(diffFileCoverageData.statements.oldPct)}%~~<br>&nbsp; | ~~${fixed2(diffFileCoverageData.branches.oldPct)}%~~<br>&nbsp; | ~~${fixed2(diffFileCoverageData.functions.oldPct)}%~~<br>&nbsp; | ~~${fixed2(diffFileCoverageData.lines.oldPct)}%~~<br>&nbsp;`;
         }
         // Coverage existed before so calculate the diff status
         const statusIcon = this.getStatusIcon(diffFileCoverageData);
