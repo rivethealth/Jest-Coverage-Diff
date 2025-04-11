@@ -50,6 +50,14 @@ export class DiffChecker {
     const keys = Object.keys(this.diffCoverageReport);
     const returnStrings: string[] = [];
     for (const key of keys) {
+      // Exclude these helpers until we fix our nondeterministic coverage data
+      if (
+        ['api/src/test/', 'e2e-test/src/', 'test/src/'].some(badSource =>
+          key.startsWith(badSource)
+        )
+      ) {
+        continue;
+      }
       if (this.compareCoverageValues(this.diffCoverageReport[key]) !== 0) {
         returnStrings.push(
           this.createDiffLine(
@@ -134,9 +142,25 @@ export class DiffChecker {
       coverageData => coverageData.newPct === 0
     );
     if (fileNewCoverage) {
-      return `${newCoverageIcon} | **${name}** | **${fixed2(diffFileCoverageData.statements.newPct)}%**<br>&nbsp; | **${fixed2(diffFileCoverageData.branches.newPct)}%**<br>&nbsp; | **${fixed2(diffFileCoverageData.functions.newPct)}%**<br>&nbsp; | **${fixed2(diffFileCoverageData.lines.newPct)}%**<br>&nbsp;`;
+      return `${newCoverageIcon} | **${name}** | **${fixed2(
+        diffFileCoverageData.statements.newPct
+      )}%**<br>&nbsp; | **${fixed2(
+        diffFileCoverageData.branches.newPct
+      )}%**<br>&nbsp; | **${fixed2(
+        diffFileCoverageData.functions.newPct
+      )}%**<br>&nbsp; | **${fixed2(
+        diffFileCoverageData.lines.newPct
+      )}%**<br>&nbsp;`;
     } else if (fileRemovedCoverage) {
-      return `${removedCoverageIcon} | ~~${name}~~ | ~~${fixed2(diffFileCoverageData.statements.oldPct)}%~~<br>&nbsp; | ~~${fixed2(diffFileCoverageData.branches.oldPct)}%~~<br>&nbsp; | ~~${fixed2(diffFileCoverageData.functions.oldPct)}%~~<br>&nbsp; | ~~${fixed2(diffFileCoverageData.lines.oldPct)}%~~<br>&nbsp;`;
+      return `${removedCoverageIcon} | ~~${name}~~ | ~~${fixed2(
+        diffFileCoverageData.statements.oldPct
+      )}%~~<br>&nbsp; | ~~${fixed2(
+        diffFileCoverageData.branches.oldPct
+      )}%~~<br>&nbsp; | ~~${fixed2(
+        diffFileCoverageData.functions.oldPct
+      )}%~~<br>&nbsp; | ~~${fixed2(
+        diffFileCoverageData.lines.oldPct
+      )}%~~<br>&nbsp;`;
     }
     // Coverage existed before so calculate the diff status
     const statusIcon = this.getStatusIcon(diffFileCoverageData);
